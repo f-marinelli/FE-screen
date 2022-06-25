@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
-import useSignIn from '../../hooks/useSignIn';
+import useModal from '../../hooks/useModal';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 
@@ -15,7 +15,7 @@ const BtnKey: React.FC = () => {
     handleCloseUp,
     handleShowIn,
     handleSwitchForm,
-  } = useSignIn();
+  } = useModal();
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);

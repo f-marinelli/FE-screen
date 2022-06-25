@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
-import useSignIn from '../../hooks/useSignIn';
+import useModal from '../../hooks/useModal';
 import ModalSignIn from './ModalSignIn';
 import ModalSignUp from './ModalSignUp';
 
@@ -13,7 +13,7 @@ const ButtonsNav: React.FC = () => {
     handleShowIn,
     handleShowUp,
     handleSwitchForm,
-  } = useSignIn();
+  } = useModal();
 
   return (
     <div className="d-flex justify-content-around">

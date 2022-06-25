@@ -23,5 +23,4 @@ app.post('/api/stripe', async (req, res) => {
   res.redirect(303, session.url);
 });
 
-// app.listen(4242, () => console.log('Running on port 4242'));
 module.exports = app;

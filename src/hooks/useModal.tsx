@@ -10,7 +10,7 @@ interface DataOutput {
   handleSwitchForm: () => void;
 }
 
-const useSignIn = (): DataOutput => {
+const useModal = (): DataOutput => {
   const [showIn, setShowIn] = useState(false);
   const [showUp, setShowUp] = useState(false);
 
@@ -41,4 +41,4 @@ const useSignIn = (): DataOutput => {
   };
 };
 
-export default useSignIn;
+export default useModal;
