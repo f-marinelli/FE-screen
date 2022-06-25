@@ -18,7 +18,6 @@ const BtnKey: React.FC = () => {
   } = useSignIn();
 
   useEffect(() => {
-    // Check to see if this is a redirect back from Checkout
     const query = new URLSearchParams(window.location.search);
 
     if (query.get('success')) {
@@ -32,14 +31,6 @@ const BtnKey: React.FC = () => {
     }
   }, []);
 
-  // const fetchStripe = async () => {
-  //   const res = await fetch('http://localhost:4242/create-checkout-session', {
-  //     method: 'POST',
-  //   });
-
-  //   console.log(res.url);
-  // };
-
   const handleClick = () => {
     Object.keys(user).length === 0 && handleShowIn();
   };
@@ -48,10 +39,7 @@ const BtnKey: React.FC = () => {
 
   return (
     <div className="container d-flex justify-content-center mt-5">
-      <form
-        action="http://localhost:4242/create-checkout-session"
-        method="POST"
-      >
+      <form action="/api/stripe" method="POST">
         <Button type={btnType} variant="primary" onClick={handleClick}>
           Buy A Key
         </Button>
