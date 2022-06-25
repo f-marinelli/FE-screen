@@ -1,10 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
 import { useValidate } from '../../hooks/useValidate';
-import { auth, db } from '../../utils/firebaseConfig';
+import { auth } from '../../utils/firebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { useFirestore } from '../../hooks/useFirestore';
 
 interface Props {
   show: boolean;
@@ -13,7 +12,7 @@ interface Props {
 }
 
 const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
-  const { setUser } = useContext(AuthContext);
+  const { getUserDoc } = useFirestore();
 
   const { emailValid, passwordValid, validateForm, resetForm } = useValidate();
 
@@ -40,22 +39,14 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
 
   useEffect(() => {
     if (emailValid && passwordValid) {
-      signInWithEmailAndPassword(auth, formData.email, formData.password)
-        .then((res) => res.user.uid)
-        .then((res) => {
-          getDoc(doc(db, 'users', res)).then((res) =>
-            setUser({
-              username: res.data()!.username,
-              email: res.data()!.email,
-              password: res.data()!.password,
-              id: res.data()!.id,
-            })
-          );
-        });
+      signInWithEmailAndPassword(auth, formData.email, formData.password).then(
+        (res) => getUserDoc(res.user.uid)
+      );
+
       resetForm();
       handleClose();
     }
-  }, [passwordValid, emailValid, resetForm, handleClose, formData, setUser]);
+  }, [passwordValid, emailValid, resetForm, handleClose, formData, getUserDoc]);
 
   return (
     <>

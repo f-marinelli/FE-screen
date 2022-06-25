@@ -3,7 +3,7 @@ import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, usersRef } from '../../utils/firebaseConfig';
-import { setDoc, doc } from 'firebase/firestore';
+import { useFirestore } from '../../hooks/useFirestore';
 
 interface Props {
   show: boolean;
@@ -14,6 +14,8 @@ interface Props {
 const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   const { emailValid, passwordValid, usernameValid, validateForm, resetForm } =
     useValidate();
+
+  const { setUserDoc } = useFirestore();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -54,14 +56,7 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
         auth,
         formData.email,
         formData.password
-      ).then((res) =>
-        setDoc(doc(usersRef, res.user.uid), {
-          username: formData.username,
-          password: formData.password,
-          email: formData.email,
-          id: res.user.uid,
-        })
-      );
+      ).then((res) => setUserDoc(usersRef, res.user.uid, formData));
 
       resetForm();
       handleClose();
@@ -73,6 +68,7 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
     resetForm,
     handleClose,
     formData,
+    setUserDoc,
   ]);
 
   return (

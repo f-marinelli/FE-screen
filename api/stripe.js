@@ -3,6 +3,9 @@ const stripe = require('stripe')(
 );
 const express = require('express');
 const app = express();
+
+app.use(express.json()); // to support JSON-encoded bodies
+app.use(express.urlencoded());
 app.use(express.static('public'));
 
 const YOUR_DOMAIN = 'http://localhost:3000';
@@ -16,7 +19,7 @@ app.post('/api/stripe', async (req, res) => {
       },
     ],
     mode: 'payment',
-    success_url: `${YOUR_DOMAIN}?success=true`,
+    success_url: `${YOUR_DOMAIN}?success=${Object.keys(req.body)[0]}`,
     cancel_url: `${YOUR_DOMAIN}?canceled=true`,
   });
 
