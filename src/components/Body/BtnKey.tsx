@@ -51,7 +51,8 @@ const BtnKey: React.FC = () => {
 
   return (
     <div className="container d-flex justify-content-center mt-5">
-      <form action="/api/stripe" method="POST">
+      <form action="http://localhost:4242/api/stripe" method="POST">
+        {/* <form action="/api/stripe" method="POST"> */}
         <Button
           type={btnType}
           variant="primary"
