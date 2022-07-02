@@ -9,7 +9,7 @@ const app = express();
 const serviceAccount = require('./diagrammi-666da-c4da3fb7df69.json');
 
 app.use(express.json());
-app.use(express.urlencoded());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 initializeApp({

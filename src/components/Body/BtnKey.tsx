@@ -22,19 +22,19 @@ const BtnKey: React.FC = () => {
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
 
-    if (query.get('success') === Object.values(user)[3]) {
-      if (Object.keys(user).length >= 1) {
-        console.log('Order placed! You will receive an email confirmation.');
-        updateUserDoc(
-          Object.values(user)[3],
-          Math.random().toString(36).slice(2) +
-            Math.random().toString(36).slice(2)
-        );
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 1000);
-      }
-    }
+    // if (query.get('success') === user.id) {
+    //   if (user.username) {
+    //     console.log('Order placed! You will receive an email confirmation.');
+    //     updateUserDoc(
+    //       user.id,
+    //       Math.random().toString(36).slice(2) +
+    //         Math.random().toString(36).slice(2)
+    //     );
+    //     setTimeout(() => {
+    //       window.location.href = '/';
+    //     }, 1000);
+    //   }
+    // }
 
     if (query.get('canceled')) {
       console.log(
@@ -44,20 +44,20 @@ const BtnKey: React.FC = () => {
   }, [user, updateUserDoc]);
 
   const handleClick = () => {
-    Object.keys(user).length === 0 && handleShowIn();
+    !user.username && handleShowIn();
   };
 
-  const btnType = Object.keys(user).length >= 1 ? 'submit' : 'button';
+  const btnType = user.username ? 'submit' : 'button';
 
   return (
     <div className="container d-flex justify-content-center mt-5">
-      <form action="http://localhost:4242/api/stripe" method="POST">
-        {/* <form action="/api/stripe" method="POST"> */}
+      {/* <form action="http://localhost:4242/api/stripe" method="POST"> */}
+      <form action="/api/stripe" method="POST">
         <Button
           type={btnType}
           variant="primary"
           onClick={handleClick}
-          name={Object.values(user)[3]}
+          name={user.id}
         >
           Buy A Key
         </Button>
