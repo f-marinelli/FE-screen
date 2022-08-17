@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import { auth } from '../../utils/firebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useFirestore } from '../../hooks/useFirestore';
+import { AuthContext } from '../../context/AuthContext';
 
 interface Props {
   show: boolean;
@@ -12,7 +10,7 @@ interface Props {
 }
 
 const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
-  const { getUserDoc } = useFirestore();
+  const { setUser } = useContext(AuthContext);
 
   const { emailValid, passwordValid, validateForm, resetForm } = useValidate();
 
@@ -39,14 +37,25 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
 
   useEffect(() => {
     if (emailValid && passwordValid) {
-      signInWithEmailAndPassword(auth, formData.email, formData.password).then(
-        (res) => getUserDoc(res.user.uid)
-      );
+      const data = {
+        email: formData.email,
+        password: formData.password,
+      };
+
+      fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signin`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => setUser(json));
 
       resetForm();
       handleClose();
     }
-  }, [passwordValid, emailValid, resetForm, handleClose, formData, getUserDoc]);
+  }, [passwordValid, emailValid, resetForm, handleClose, formData, setUser]);
 
   return (
     <>
@@ -66,10 +75,7 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
                 required
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
+            <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
               <Form.Label>Password</Form.Label>
               <Form.Control type="password" name="password" required />
             </Form.Group>

@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth, usersRef } from '../../utils/firebaseConfig';
-import { useFirestore } from '../../hooks/useFirestore';
+import { AuthContext } from '../../context/AuthContext';
 
 interface Props {
   show: boolean;
@@ -12,10 +10,8 @@ interface Props {
 }
 
 const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
-  const { emailValid, passwordValid, usernameValid, validateForm, resetForm } =
-    useValidate();
-
-  const { setUserDoc } = useFirestore();
+  const { emailValid, passwordValid, usernameValid, validateForm, resetForm } = useValidate();
+  const { setUser } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -52,24 +48,26 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
 
   useEffect(() => {
     if (emailValid && passwordValid && usernameValid) {
-      createUserWithEmailAndPassword(
-        auth,
-        formData.email,
-        formData.password
-      ).then((res) => setUserDoc(usersRef, res.user.uid, formData));
+      const data = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      };
+
+      fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signup`, {
+        method: 'POST',
+        body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then((res) => res.json())
+        .then((json) => setUser(json));
 
       resetForm();
       handleClose();
     }
-  }, [
-    passwordValid,
-    emailValid,
-    usernameValid,
-    resetForm,
-    handleClose,
-    formData,
-    setUserDoc,
-  ]);
+  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, setUser]);
 
   return (
     <>
@@ -81,28 +79,14 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
           <Modal.Body>
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput32">
               <Form.Label>Username</Form.Label>
-              <Form.Control
-                type="text"
-                name="username"
-                placeholder="Username"
-                autoFocus
-                required
-              />
+              <Form.Control type="text" name="username" placeholder="Username" autoFocus required />
             </Form.Group>
 
             <Form.Group className="mb-3" controlId="exampleForm.ControlInput1">
               <Form.Label>Email address</Form.Label>
-              <Form.Control
-                type="email"
-                name="email"
-                placeholder="name@example.com"
-                required
-              />
+              <Form.Control type="email" name="email" placeholder="name@example.com" required />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea2"
-            >
+            <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea2">
               <Form.Label>Password</Form.Label>
               <Form.Control type="password" name="password" required />
             </Form.Group>

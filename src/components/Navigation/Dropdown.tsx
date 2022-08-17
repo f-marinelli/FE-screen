@@ -8,7 +8,7 @@ const DropdownMenu: React.FC = () => {
   return (
     <Dropdown>
       <Dropdown.Toggle variant="success" id="dropdown-basic">
-        {Object.values(user)[0]}
+        {user.username}
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
