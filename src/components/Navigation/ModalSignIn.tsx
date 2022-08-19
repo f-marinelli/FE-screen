@@ -88,6 +88,7 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
             <Button variant="secondary" onClick={handleClose}>
               Close
             </Button>
+
             <Button type="submit" variant="primary">
               Sign In
             </Button>

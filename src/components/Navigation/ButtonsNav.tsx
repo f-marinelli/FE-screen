@@ -24,16 +24,8 @@ const ButtonsNav: React.FC = () => {
         Sign Up
       </Button>
 
-      <ModalSignIn
-        show={showIn}
-        handleClose={handleCloseIn}
-        switchForm={handleSwitchForm}
-      />
-      <ModalSignUp
-        show={showUp}
-        handleClose={handleCloseUp}
-        switchForm={handleSwitchForm}
-      />
+      <ModalSignIn show={showIn} handleClose={handleCloseIn} switchForm={handleSwitchForm} />
+      <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
     </div>
   );
 };
