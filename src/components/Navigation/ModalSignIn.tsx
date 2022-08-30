@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import { AuthContext } from '../../context/AuthContext';
+import useFetch from '../../hooks/useFetch';
 
 interface Props {
   show: boolean;
   handleClose: () => void;
   switchForm: () => void;
+  handleShowPsw: () => void;
 }
 
-const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
-  const { setUser } = useContext(AuthContext);
-
+const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm, handleShowPsw }) => {
   const { emailValid, passwordValid, validateForm, resetForm } = useValidate();
+  const { signIn } = useFetch();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -42,20 +42,12 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
         password: formData.password,
       };
 
-      fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signin`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
-        .then((json) => setUser(json));
+      signIn(data);
 
       resetForm();
       handleClose();
     }
-  }, [passwordValid, emailValid, resetForm, handleClose, formData, setUser]);
+  }, [passwordValid, emailValid, resetForm, handleClose, formData, signIn]);
 
   return (
     <>
@@ -81,8 +73,12 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
+            <Button variant="link" onClick={handleShowPsw}>
+              Forgot Password?
+            </Button>
+
             <Button variant="link" onClick={switchForm}>
-              Sign up
+              Sign Up
             </Button>
 
             <Button variant="secondary" onClick={handleClose}>

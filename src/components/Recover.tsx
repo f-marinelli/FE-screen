@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import { useValidate } from '../hooks/useValidate';
+import useFetch from '../hooks/useFetch';
 
 const Recover: React.FunctionComponent = () => {
   const { passwordValid, validatePassword } = useValidate();
   const navigate = useNavigate();
   const { token } = useParams();
+  const { updatePassword } = useFetch();
   const [newPassword, setNewPassword] = useState('');
   const [decodedToken, setDecodedToken] = useState<{
     email: string;
@@ -39,16 +41,9 @@ const Recover: React.FunctionComponent = () => {
 
   useEffect(() => {
     if (passwordValid && decodedToken !== null) {
-      fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/updatePassword`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-access-token': token,
-        } as HeadersInit,
-        body: JSON.stringify({ email: decodedToken.email, newPassword: newPassword }),
-      }).then((res) => (res.ok ? navigate('/', { replace: true }) : null));
+      updatePassword(token as string, decodedToken, newPassword);
     }
-  }, [passwordValid, decodedToken, newPassword, token, navigate]);
+  }, [passwordValid, decodedToken, newPassword, token, navigate, updatePassword]);
 
   return (
     <form onSubmit={handleSubmit}>

@@ -1,7 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import { AuthContext } from '../../context/AuthContext';
+import useFetch from '../../hooks/useFetch';
 
 interface Props {
   show: boolean;
@@ -11,7 +11,7 @@ interface Props {
 
 const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   const { emailValid, passwordValid, usernameValid, validateForm, resetForm } = useValidate();
-  const { setUser } = useContext(AuthContext);
+  const { signUp } = useFetch();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -54,20 +54,12 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
         password: formData.password,
       };
 
-      fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signup`, {
-        method: 'POST',
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then((res) => res.json())
-        .then((json) => setUser(json));
+      signUp(data);
 
       resetForm();
       handleClose();
     }
-  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, setUser]);
+  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, signUp]);
 
   return (
     <>
