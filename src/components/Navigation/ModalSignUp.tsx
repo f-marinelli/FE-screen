@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import useFetch from '../../hooks/useFetch';
+import { AuthContext } from '../../context/AuthContext';
+import signUp from '../../services/signUp';
 
 interface Props {
   show: boolean;
@@ -11,7 +12,7 @@ interface Props {
 
 const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   const { emailValid, passwordValid, usernameValid, validateForm, resetForm } = useValidate();
-  const { signUp } = useFetch();
+  const { setUser } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -47,19 +48,25 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   };
 
   useEffect(() => {
-    if (emailValid && passwordValid && usernameValid) {
-      const data = {
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-      };
+    const fetch = async () => {
+      if (emailValid && passwordValid && usernameValid) {
+        const data = {
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        };
 
-      signUp(data);
+        const res = await signUp(data);
 
-      resetForm();
-      handleClose();
-    }
-  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, signUp]);
+        if (res?.ok) setUser(res.user);
+        if (!res?.ok) console.log(res.message);
+
+        resetForm();
+        handleClose();
+      }
+    };
+    fetch();
+  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, setUser]);
 
   return (
     <>
@@ -91,10 +98,10 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
             <Button variant="link" onClick={switchForm}>
               Sign In
             </Button>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outline-danger" onClick={handleClose}>
               Close
             </Button>
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="outline-dark">
               Sign Up
             </Button>
           </Modal.Footer>

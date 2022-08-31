@@ -1,15 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import { useValidate } from '../hooks/useValidate';
-import useFetch from '../hooks/useFetch';
+import updatePassword from '../services/updatePassword';
+import { AuthContext } from '../context/AuthContext';
 
 const Recover: React.FunctionComponent = () => {
   const { passwordValid, validatePassword } = useValidate();
   const navigate = useNavigate();
   const { token } = useParams();
-  const { updatePassword } = useFetch();
   const [newPassword, setNewPassword] = useState('');
+  const { setUser } = useContext(AuthContext);
   const [decodedToken, setDecodedToken] = useState<{
     email: string;
     iat: number;
@@ -40,10 +41,19 @@ const Recover: React.FunctionComponent = () => {
   };
 
   useEffect(() => {
-    if (passwordValid && decodedToken !== null) {
-      updatePassword(token as string, decodedToken, newPassword);
-    }
-  }, [passwordValid, decodedToken, newPassword, token, navigate, updatePassword]);
+    const fetch = async () => {
+      if (passwordValid && decodedToken !== null) {
+        const res = await updatePassword(token as string, decodedToken, newPassword);
+
+        if (res?.ok) {
+          setUser(res.user);
+          navigate('/', { replace: true });
+        }
+        if (!res?.ok) console.log(res.message);
+      }
+    };
+    fetch();
+  }, [passwordValid, decodedToken, newPassword, token, navigate, setUser]);
 
   return (
     <form onSubmit={handleSubmit}>

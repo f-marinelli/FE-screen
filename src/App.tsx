@@ -20,7 +20,7 @@ function App() {
   }, [user]);
 
   return (
-    <div className="App">
+    <div className="App h-100">
       <AuthContext.Provider value={{ user, setUser }}>
         <Navigation />
         <Routes>

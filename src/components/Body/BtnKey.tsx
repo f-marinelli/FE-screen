@@ -1,15 +1,15 @@
 import React, { useContext, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
-import useFetch from '../../hooks/useFetch';
 import useModal from '../../hooks/useModal';
 import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
+import signIn from '../../services/signIn';
+import stripe from '../../services/stripe';
 
 const BtnKey: React.FC = () => {
   const { user } = useContext(AuthContext);
-  const { signIn, stripe } = useFetch();
 
   const {
     showIn,
@@ -40,13 +40,13 @@ const BtnKey: React.FC = () => {
       window.alert("Order canceled -- continue to shop around and checkout when you're ready.");
       window.location.href = '/';
     }
-  }, [user, signIn]);
+  }, [user]);
 
   const handleClick = async () => {
     !user.username && handleShowIn();
 
     if (user.username) {
-      const url = await stripe();
+      const url = await stripe(user);
       window.location.href = url;
     }
   };
@@ -54,8 +54,8 @@ const BtnKey: React.FC = () => {
   const btnType = user.username ? 'submit' : 'button';
 
   return (
-    <div className="container d-flex justify-content-center mt-5">
-      <Button type={btnType} variant="primary" onClick={handleClick}>
+    <div className="container d-flex justify-content-center">
+      <Button type={btnType} variant="dark" onClick={handleClick}>
         Buy A Key
       </Button>
 

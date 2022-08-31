@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
-import useFetch from '../../hooks/useFetch';
+import recoverPassword from '../../services/recoverPassword';
 import { useValidate } from '../../hooks/useValidate';
 
 interface Props {
@@ -11,7 +11,6 @@ interface Props {
 const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
   const { emailValid, validateEmail } = useValidate();
   const [email, setEmail] = useState('');
-  const { recoverPassword } = useFetch();
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -29,7 +28,7 @@ const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
       recoverPassword(email);
       handleClose();
     }
-  }, [emailValid, email, handleClose, recoverPassword]);
+  }, [emailValid, email, handleClose]);
 
   return (
     <>
@@ -45,10 +44,10 @@ const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outline-danger" onClick={handleClose}>
               Close
             </Button>
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="outline-dark">
               Send
             </Button>
           </Modal.Footer>

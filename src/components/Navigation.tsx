@@ -8,9 +8,11 @@ const Navigation: React.FC = () => {
   const { user } = useContext(AuthContext);
 
   return (
-    <Navbar expand="lg" variant="light" bg="light">
+    <Navbar expand="lg" variant="dark" bg="dark" className="fixed-top">
       <Container className="justify-content-between">
-        <Navbar.Brand href="#">Navbar</Navbar.Brand>
+        <Navbar.Brand color="light" href="#">
+          LOGO
+        </Navbar.Brand>
         {Object.keys(user).length === 0 ? <ButtonsNav /> : <DropdownMenu />}
       </Container>
     </Navbar>

@@ -5,6 +5,7 @@ type User = {
   password?: string;
   email?: string;
   accessToken?: string;
+  APIKey?: string;
 };
 
 export const AuthContext: React.Context<{

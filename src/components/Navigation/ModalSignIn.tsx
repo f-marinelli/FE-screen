@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import useFetch from '../../hooks/useFetch';
+import { AuthContext } from '../../context/AuthContext';
+import signIn from '../../services/signIn';
 
 interface Props {
   show: boolean;
@@ -12,7 +13,7 @@ interface Props {
 
 const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm, handleShowPsw }) => {
   const { emailValid, passwordValid, validateForm, resetForm } = useValidate();
-  const { signIn } = useFetch();
+  const { setUser } = useContext(AuthContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -36,18 +37,24 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm, handleSho
   };
 
   useEffect(() => {
-    if (emailValid && passwordValid) {
-      const data = {
-        email: formData.email,
-        password: formData.password,
-      };
+    const fetch = async () => {
+      if (emailValid && passwordValid) {
+        const data = {
+          email: formData.email,
+          password: formData.password,
+        };
 
-      signIn(data);
+        const res = await signIn(data);
 
-      resetForm();
-      handleClose();
-    }
-  }, [passwordValid, emailValid, resetForm, handleClose, formData, signIn]);
+        if (res?.ok) setUser(res.user);
+        if (!res?.ok) console.log(res.message);
+
+        resetForm();
+        handleClose();
+      }
+    };
+    fetch();
+  }, [passwordValid, emailValid, resetForm, handleClose, formData, setUser]);
 
   return (
     <>
@@ -81,11 +88,11 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm, handleSho
               Sign Up
             </Button>
 
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="outline-danger" onClick={handleClose}>
               Close
             </Button>
 
-            <Button type="submit" variant="primary">
+            <Button type="submit" variant="outline-dark">
               Sign In
             </Button>
           </Modal.Footer>

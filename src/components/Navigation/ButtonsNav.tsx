@@ -21,10 +21,10 @@ const ButtonsNav: React.FC = () => {
 
   return (
     <div className="d-flex justify-content-around">
-      <Button className="me-4" variant="primary" onClick={handleShowIn}>
+      <Button className="me-4" variant="outline-light" onClick={handleShowIn}>
         Sign In
       </Button>
-      <Button variant="primary" onClick={handleShowUp}>
+      <Button variant="outline-light" onClick={handleShowUp}>
         Sign Up
       </Button>
 

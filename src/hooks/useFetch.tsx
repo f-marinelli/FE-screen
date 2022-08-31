@@ -1,36 +1,44 @@
-import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-
 const useFetch = () => {
-  const { user, setUser } = useContext(AuthContext);
-  const navigate = useNavigate();
-
-  const signIn = (data: { email: string | undefined; password: string | undefined }) => {
-    fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signin`, {
+  const signIn = async (data: { email: string | undefined; password: string | undefined }) => {
+    const res = await fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signin`, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
       },
-    })
-      .then((res) => res.json())
-      .then((json) => setUser(json));
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+
+      return { user: json, ok: res.ok };
+    } else {
+      const json = await res.json();
+
+      return { message: json, ok: res.ok };
+    }
   };
 
-  const signUp = (data: { username: string; email: string; password: string }) => {
-    fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signup`, {
+  const signUp = async (data: { username: string; email: string; password: string }) => {
+    const res = await fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/signup`, {
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
       },
-    })
-      .then((res) => res.json())
-      .then((json) => setUser(json));
+    });
+    if (res.ok) {
+      const json = await res.json();
+
+      return { user: json, ok: res.ok };
+    } else {
+      const json = await res.json();
+
+      return { message: json, ok: res.ok };
+    }
   };
 
-  const updatePassword = (
+  const updatePassword = async (
     token: string,
     decodedToken: {
       email: string;
@@ -39,17 +47,23 @@ const useFetch = () => {
     },
     newPassword: string
   ) => {
-    fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/updatePassword`, {
+    const res = await fetch(`${process.env.REACT_APP_BE_DOMAIN}/auth/updatePassword`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
         'x-access-token': token,
       } as HeadersInit,
       body: JSON.stringify({ email: decodedToken.email, newPassword: newPassword }),
-    })
-      .then((res) => res.json())
-      .then((json) => setUser(json))
-      .then(() => navigate('/', { replace: true }));
+    });
+    if (res.ok) {
+      const json = await res.json();
+
+      return { user: json, ok: res.ok };
+    } else {
+      const json = await res.json();
+
+      return { message: json, ok: res.ok };
+    }
   };
 
   const recoverPassword = (email: string) => {
@@ -62,7 +76,13 @@ const useFetch = () => {
     });
   };
 
-  const stripe = async () => {
+  const stripe = async (user: {
+    username?: string;
+    password?: string;
+    email?: string;
+    accessToken?: string;
+    APIKey?: string;
+  }) => {
     const res = await fetch(`${process.env.REACT_APP_BE_DOMAIN}/stripe`, {
       method: 'POST',
       headers: {
@@ -75,7 +95,21 @@ const useFetch = () => {
     return body.url;
   };
 
-  return { signIn, signUp, updatePassword, recoverPassword, stripe };
+  const screenshot = async (data: string, apiKey: string | undefined) => {
+    const res = await fetch(`${process.env.REACT_APP_BE_DOMAIN}/screen`, {
+      method: 'POST',
+      body: JSON.stringify({ apiKey: apiKey, html: data }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const file = await res.blob();
+
+    return file;
+  };
+
+  return { signIn, signUp, updatePassword, recoverPassword, stripe, screenshot };
 };
 
 export default useFetch;
