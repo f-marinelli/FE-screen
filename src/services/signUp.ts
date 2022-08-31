@@ -13,7 +13,7 @@ const signUp = async (data: { username: string; email: string; password: string 
   } else {
     const json = await res.json();
 
-    return { message: json, ok: res.ok };
+    return { message: json.message, ok: res.ok };
   }
 };
 

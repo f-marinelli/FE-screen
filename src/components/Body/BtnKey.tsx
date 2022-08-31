@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import useModal from '../../hooks/useModal';
@@ -7,9 +7,11 @@ import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import signIn from '../../services/signIn';
 import stripe from '../../services/stripe';
+import Message from '../Message';
 
 const BtnKey: React.FC = () => {
   const { user } = useContext(AuthContext);
+  const [message, setMessage] = useState('');
 
   const {
     showIn,
@@ -46,8 +48,13 @@ const BtnKey: React.FC = () => {
     !user.username && handleShowIn();
 
     if (user.username) {
-      const url = await stripe(user);
-      window.location.href = url;
+      const res = await stripe(user);
+
+      if (res.ok) {
+        window.location.href = res.url;
+      } else {
+        setMessage(res.message);
+      }
     }
   };
 
@@ -67,6 +74,7 @@ const BtnKey: React.FC = () => {
       />
       <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
       <ModalPsw show={showPsw} handleClose={handleClosePsw} />
+      <Message message={message} setMessage={setMessage} />
     </div>
   );
 };

@@ -13,8 +13,17 @@ const stripe = async (user: {
     } as HeadersInit,
   });
 
-  const body = await res.json();
-  return body.url;
+  // const body = await res.json();
+  // return body.url;
+
+  if (res.ok) {
+    const body = await res.json();
+
+    return { url: body.url, ok: res.ok };
+  } else {
+    const json = await res.json();
+    return { message: json.message, ok: res.ok };
+  }
 };
 
 export default stripe;

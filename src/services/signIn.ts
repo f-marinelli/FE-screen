@@ -13,8 +13,7 @@ const signIn = async (data: { email: string | undefined; password: string | unde
     return { user: json, ok: res.ok };
   } else {
     const json = await res.json();
-
-    return { message: json, ok: res.ok };
+    return { message: json.message, ok: res.ok };
   }
 };
 

@@ -22,7 +22,7 @@ const updatePassword = async (
   } else {
     const json = await res.json();
 
-    return { message: json, ok: res.ok };
+    return { message: json.message, ok: res.ok };
   }
 };
 

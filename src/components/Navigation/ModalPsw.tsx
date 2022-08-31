@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import recoverPassword from '../../services/recoverPassword';
 import { useValidate } from '../../hooks/useValidate';
+import Message from '../Message';
 
 interface Props {
   show: boolean;
@@ -11,6 +12,7 @@ interface Props {
 const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
   const { emailValid, validateEmail } = useValidate();
   const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -24,11 +26,17 @@ const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
   };
 
   useEffect(() => {
-    if (emailValid) {
-      recoverPassword(email);
-      handleClose();
-    }
-  }, [emailValid, email, handleClose]);
+    const fetch = async () => {
+      if (email && emailValid) {
+        const res = await recoverPassword(email);
+
+        setMessage(res.message);
+        handleClose();
+      }
+      setEmail('');
+    };
+    fetch();
+  }, [emailValid, email, handleClose, validateEmail]);
 
   return (
     <>
@@ -53,6 +61,7 @@ const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
           </Modal.Footer>
         </Form>
       </Modal>
+      <Message message={message} setMessage={setMessage} />
     </>
   );
 };

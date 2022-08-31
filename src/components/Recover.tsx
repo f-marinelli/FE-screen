@@ -4,12 +4,14 @@ import jwt_decode from 'jwt-decode';
 import { useValidate } from '../hooks/useValidate';
 import updatePassword from '../services/updatePassword';
 import { AuthContext } from '../context/AuthContext';
+import Message from './Message';
 
 const Recover: React.FunctionComponent = () => {
   const { passwordValid, validatePassword } = useValidate();
   const navigate = useNavigate();
   const { token } = useParams();
   const [newPassword, setNewPassword] = useState('');
+  const [message, setMessage] = useState('');
   const { setUser } = useContext(AuthContext);
   const [decodedToken, setDecodedToken] = useState<{
     email: string;
@@ -49,24 +51,27 @@ const Recover: React.FunctionComponent = () => {
           setUser(res.user);
           navigate('/', { replace: true });
         }
-        if (!res?.ok) console.log(res.message);
+        if (!res?.ok) setMessage(res.message);
       }
     };
     fetch();
   }, [passwordValid, decodedToken, newPassword, token, navigate, setUser]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        New Password
-        <input type="password" name="newPassword" />
-      </label>
-      <label>
-        Confirm New Password
-        <input type="password" name="ConfirmNewPassword" />
-      </label>
-      <button type="submit">Submit</button>
-    </form>
+    <>
+      <form onSubmit={handleSubmit}>
+        <label>
+          New Password
+          <input type="password" name="newPassword" />
+        </label>
+        <label>
+          Confirm New Password
+          <input type="password" name="ConfirmNewPassword" />
+        </label>
+        <button type="submit">Submit</button>
+      </form>
+      <Message message={message} setMessage={setMessage} />
+    </>
   );
 };
 
