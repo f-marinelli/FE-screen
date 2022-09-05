@@ -4,8 +4,7 @@ import classes from './Hero.module.css';
 const Hero: React.FC = () => {
   return (
     <h1 className={classes.hero}>
-      You Code <br />
-      We Screen
+      Hero
     </h1>
   );
 };
