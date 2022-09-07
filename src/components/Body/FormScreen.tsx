@@ -6,10 +6,13 @@ import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import screenshot from '../../services/screenshot';
+import Message from '../Message';
 
 const FormScreen: React.FC = () => {
   const { user } = useContext(AuthContext);
   const [download, setDownload] = useState('');
+  const [message, setMessage] = useState('');
+
   const {
     showIn,
     showUp,
@@ -36,11 +39,18 @@ const FormScreen: React.FC = () => {
 
     const code = target.textarea.value;
 
-    const file = await screenshot(code, user.APIKey);
+    const res = await screenshot(code, user.APIKey);
 
-    const objectURL = URL.createObjectURL(file);
+    if (res.ok) {
+      const file = await res.blob();
+      const objectURL = URL.createObjectURL(file);
 
-    setDownload(objectURL);
+      setDownload(objectURL);
+    }
+    if (!res?.ok) {
+      const json = await res.json();
+      setMessage(json.message);
+    }
   };
 
   const downloadButton = download ? (
@@ -77,6 +87,7 @@ const FormScreen: React.FC = () => {
       />
       <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
       <ModalPsw show={showPsw} handleClose={handleClosePsw} />
+      <Message message={message} setMessage={setMessage} />
     </Container>
   );
 };

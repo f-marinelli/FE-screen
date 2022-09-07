@@ -7,9 +7,7 @@ const screenshot = async (data: string, apiKey: string | undefined) => {
     },
   });
 
-  const file = await res.blob();
-
-  return file;
+  return res;
 };
 
 export default screenshot;

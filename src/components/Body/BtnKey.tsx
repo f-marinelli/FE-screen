@@ -39,7 +39,7 @@ const BtnKey: React.FC = () => {
     }
 
     if (query.get('canceled')) {
-      window.alert("Order canceled -- continue to shop around and checkout when you're ready.");
+      setMessage("Order canceled -- continue to shop around and checkout when you're ready.");
       window.location.href = '/';
     }
   }, [user]);
@@ -58,11 +58,9 @@ const BtnKey: React.FC = () => {
     }
   };
 
-  const btnType = user.username ? 'submit' : 'button';
-
   return (
     <div className="container d-flex justify-content-center">
-      <Button type={btnType} variant="dark" onClick={handleClick}>
+      <Button type="button" variant="dark" onClick={handleClick}>
         Buy A Key
       </Button>
 

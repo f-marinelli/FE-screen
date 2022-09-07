@@ -5,6 +5,8 @@ import { useValidate } from '../hooks/useValidate';
 import updatePassword from '../services/updatePassword';
 import { AuthContext } from '../context/AuthContext';
 import Message from './Message';
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
 
 const Recover: React.FunctionComponent = () => {
   const { passwordValid, validatePassword } = useValidate();
@@ -59,17 +61,23 @@ const Recover: React.FunctionComponent = () => {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <label>
-          New Password
-          <input type="password" name="newPassword" />
-        </label>
-        <label>
-          Confirm New Password
-          <input type="password" name="ConfirmNewPassword" />
-        </label>
-        <button type="submit">Submit</button>
-      </form>
+      <Form
+        style={{ margin: '7% auto', width: '40%' }}
+        className="d-flex flex-column align-items-center"
+        onSubmit={handleSubmit}
+      >
+        <Form.Group className="mb-3 d-flex w-100" controlId="formGroupEmail">
+          <Form.Label style={{ width: '100%' }}>New Password:</Form.Label>
+          <Form.Control type="password" name="newPassword" />
+        </Form.Group>
+        <Form.Group className="mb-3 d-flex w-100" controlId="formGroupPassword">
+          <Form.Label style={{ width: '100%' }}>Confirm New Password:</Form.Label>
+          <Form.Control type="password" name="ConfirmNewPassword" />
+        </Form.Group>
+        <Button style={{ width: 'fit-content' }} variant="dark" type="submit">
+          Submit
+        </Button>
+      </Form>
       <Message message={message} setMessage={setMessage} />
     </>
   );
