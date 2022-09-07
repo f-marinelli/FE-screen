@@ -4,6 +4,8 @@ import Navigation from './components/Navigation';
 import { AuthContext } from './context/AuthContext';
 import { Routes, Route } from 'react-router-dom';
 import Recover from './components/Recover';
+import Profile from './components/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const [user, setUser] = useState({});
@@ -25,6 +27,9 @@ function App() {
         <Navigation />
         <Routes>
           <Route path="/" element={<Body />} />
+          <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/profile" element={<Profile user={user} />} />
+          </Route>
           <Route path="/:token" element={<Recover />}></Route>
         </Routes>
       </AuthContext.Provider>
