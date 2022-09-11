@@ -10,7 +10,7 @@ import stripe from '../../services/stripe';
 import Message from '../Message';
 
 const BtnKey: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const { user, setUser } = useContext(AuthContext);
   const [message, setMessage] = useState('');
 
   const {
@@ -33,16 +33,22 @@ const BtnKey: React.FC = () => {
       password: user.password,
     };
 
-    if (query.get('success') && user.email) {
-      signIn(data);
-      window.location.href = '/';
-    }
+    const fetch = async () => {
+      if (query.get('success') && user.email) {
+        const res = await signIn(data);
 
-    if (query.get('canceled')) {
-      setMessage("Order canceled -- continue to shop around and checkout when you're ready.");
-      window.location.href = '/';
-    }
-  }, [user]);
+        if (res?.ok) setUser(res.user);
+        if (!res?.ok) setMessage(res.message);
+        window.location.href = '/';
+      }
+
+      if (query.get('canceled')) {
+        setMessage("Order canceled -- continue to shop around and checkout when you're ready.");
+        window.location.href = '/';
+      }
+    };
+    fetch();
+  }, [user, setUser]);
 
   const handleClick = async () => {
     !user.username && handleShowIn();
