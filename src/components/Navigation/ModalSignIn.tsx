@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import { auth } from '../../utils/firebaseConfig';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useFirestore } from '../../hooks/useFirestore';
+import { AuthContext } from '../../context/AuthContext';
+import signIn from '../../services/signIn';
+import Message from '../Message';
 
 interface Props {
   show: boolean;
   handleClose: () => void;
   switchForm: () => void;
+  handleShowPsw: () => void;
 }
 
-const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
-  const { getUserDoc } = useFirestore();
-
+const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm, handleShowPsw }) => {
   const { emailValid, passwordValid, validateForm, resetForm } = useValidate();
-
+  const { setUser } = useContext(AuthContext);
+  const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -38,15 +38,24 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   };
 
   useEffect(() => {
-    if (emailValid && passwordValid) {
-      signInWithEmailAndPassword(auth, formData.email, formData.password).then(
-        (res) => getUserDoc(res.user.uid)
-      );
+    const fetch = async () => {
+      if (emailValid && passwordValid) {
+        const data = {
+          email: formData.email,
+          password: formData.password,
+        };
 
-      resetForm();
-      handleClose();
-    }
-  }, [passwordValid, emailValid, resetForm, handleClose, formData, getUserDoc]);
+        const res = await signIn(data);
+
+        if (res?.ok) setUser(res.user);
+        if (!res?.ok) setMessage(res.message);
+
+        resetForm();
+        handleClose();
+      }
+    };
+    fetch();
+  }, [passwordValid, emailValid, resetForm, handleClose, formData, setUser]);
 
   return (
     <>
@@ -66,28 +75,31 @@ const ModalSignIn: React.FC<Props> = ({ show, handleClose, switchForm }) => {
                 required
               />
             </Form.Group>
-            <Form.Group
-              className="mb-3"
-              controlId="exampleForm.ControlTextarea1"
-            >
+            <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
               <Form.Label>Password</Form.Label>
               <Form.Control type="password" name="password" required />
             </Form.Group>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="link" onClick={switchForm}>
-              Sign up
+            <Button variant="link" onClick={handleShowPsw}>
+              Forgot Password?
             </Button>
 
-            <Button variant="secondary" onClick={handleClose}>
+            <Button variant="link" onClick={switchForm}>
+              Sign Up
+            </Button>
+
+            <Button variant="outline-danger" onClick={handleClose}>
               Close
             </Button>
-            <Button type="submit" variant="primary">
+
+            <Button type="submit" variant="outline-dark">
               Sign In
             </Button>
           </Modal.Footer>
         </Form>
       </Modal>
+      <Message message={message} setMessage={setMessage} />
     </>
   );
 };

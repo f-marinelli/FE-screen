@@ -2,6 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Body from './components/Body';
 import Navigation from './components/Navigation';
 import { AuthContext } from './context/AuthContext';
+import { Routes, Route } from 'react-router-dom';
+import Recover from './components/Recover';
+import Profile from './components/Profile';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   const [user, setUser] = useState({});
@@ -18,10 +22,16 @@ function App() {
   }, [user]);
 
   return (
-    <div className="App">
+    <div className="App h-100">
       <AuthContext.Provider value={{ user, setUser }}>
         <Navigation />
-        <Body />
+        <Routes>
+          <Route path="/" element={<Body />} />
+          <Route element={<ProtectedRoute user={user} />}>
+            <Route path="/profile" element={<Profile user={user} />} />
+          </Route>
+          <Route path="/:token" element={<Recover />}></Route>
+        </Routes>
       </AuthContext.Provider>
     </div>
   );

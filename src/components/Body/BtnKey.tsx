@@ -1,14 +1,17 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
-import { useFirestore } from '../../hooks/useFirestore';
 import useModal from '../../hooks/useModal';
+import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
+import signIn from '../../services/signIn';
+import stripe from '../../services/stripe';
+import Message from '../Message';
 
 const BtnKey: React.FC = () => {
   const { user } = useContext(AuthContext);
-  const { updateUserDoc } = useFirestore();
+  const [message, setMessage] = useState('');
 
   const {
     showIn,
@@ -17,61 +20,59 @@ const BtnKey: React.FC = () => {
     handleCloseUp,
     handleShowIn,
     handleSwitchForm,
+    handleShowPsw,
+    showPsw,
+    handleClosePsw,
   } = useModal();
 
   useEffect(() => {
     const query = new URLSearchParams(window.location.search);
 
-    // if (query.get('success') === user.id) {
-    //   if (user.username) {
-    //     console.log('Order placed! You will receive an email confirmation.');
-    //     updateUserDoc(
-    //       user.id,
-    //       Math.random().toString(36).slice(2) +
-    //         Math.random().toString(36).slice(2)
-    //     );
-    //     setTimeout(() => {
-    //       window.location.href = '/';
-    //     }, 1000);
-    //   }
-    // }
+    const data = {
+      email: user.email,
+      password: user.password,
+    };
+
+    if (query.get('success') && user.email) {
+      signIn(data);
+      window.location.href = '/';
+    }
 
     if (query.get('canceled')) {
-      console.log(
-        "Order canceled -- continue to shop around and checkout when you're ready."
-      );
+      setMessage("Order canceled -- continue to shop around and checkout when you're ready.");
+      window.location.href = '/';
     }
-  }, [user, updateUserDoc]);
+  }, [user]);
 
-  const handleClick = () => {
+  const handleClick = async () => {
     !user.username && handleShowIn();
+
+    if (user.username) {
+      const res = await stripe(user);
+
+      if (res.ok) {
+        window.location.href = res.url;
+      } else {
+        setMessage(res.message);
+      }
+    }
   };
 
-  const btnType = user.username ? 'submit' : 'button';
-
   return (
-    <div className="container d-flex justify-content-center mt-5">
-      {/* <form action="http://localhost:4242/api/stripe" method="POST"> */}
-      <form action="/api/stripe" method="POST">
-        <Button
-          type={btnType}
-          variant="primary"
-          onClick={handleClick}
-          name={user.id}
-        >
-          Buy A Key
-        </Button>
-      </form>
+    <div className="container d-flex justify-content-center">
+      <Button type="button" variant="dark" onClick={handleClick}>
+        Buy A Key
+      </Button>
+
       <ModalSignIn
         show={showIn}
         handleClose={handleCloseIn}
         switchForm={handleSwitchForm}
+        handleShowPsw={handleShowPsw}
       />
-      <ModalSignUp
-        show={showUp}
-        handleClose={handleCloseUp}
-        switchForm={handleSwitchForm}
-      />
+      <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
+      <ModalPsw show={showPsw} handleClose={handleClosePsw} />
+      <Message message={message} setMessage={setMessage} />
     </div>
   );
 };

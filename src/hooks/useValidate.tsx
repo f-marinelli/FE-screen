@@ -14,6 +14,8 @@ interface DataOutput {
   usernameValid: boolean;
   validateForm: (data: DataInput) => void;
   resetForm: () => void;
+  validatePassword: (password: string, confirm: string) => void;
+  validateEmail: (mail: string) => void;
 }
 
 export const useValidate = (): DataOutput => {
@@ -58,5 +60,13 @@ export const useValidate = (): DataOutput => {
     setUsernameValid(false);
   };
 
-  return { emailValid, passwordValid, usernameValid, validateForm, resetForm };
+  return {
+    emailValid,
+    passwordValid,
+    usernameValid,
+    validateForm,
+    resetForm,
+    validatePassword,
+    validateEmail,
+  };
 };
