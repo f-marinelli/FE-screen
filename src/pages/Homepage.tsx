@@ -1,10 +1,10 @@
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
-import BtnKey from './Body/BtnKey';
-import FormScreen from './Body/FormScreen';
-import Hero from './Body/Hero';
+import BtnKey from '../components/Homepage/BtnKey';
+import FormScreen from '../components/Homepage/FormScreen';
+import Hero from '../components/Homepage/Hero';
 
-const Body: React.FC = () => {
+const Homepage: React.FC = () => {
   return (
     <Container className="h-100">
       <Row className="h-75">
@@ -24,4 +24,4 @@ const Body: React.FC = () => {
   );
 };
 
-export default Body;
+export default Homepage;

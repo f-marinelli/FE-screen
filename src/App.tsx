@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import Body from './components/Body';
+import Body from './pages/Homepage';
 import Navigation from './components/Navigation';
 import { AuthContext } from './context/AuthContext';
 import { Routes, Route } from 'react-router-dom';
-import Recover from './components/Recover';
-import Profile from './components/Profile';
+import Recover from './pages/Recover';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {

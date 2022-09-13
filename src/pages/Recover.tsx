@@ -4,7 +4,7 @@ import jwt_decode from 'jwt-decode';
 import { useValidate } from '../hooks/useValidate';
 import updatePassword from '../services/updatePassword';
 import { AuthContext } from '../context/AuthContext';
-import Message from './Message';
+import Message from '../components/Message';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 
