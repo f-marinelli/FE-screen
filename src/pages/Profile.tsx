@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import recoverPassword from '../services/recoverPassword';
-import Message from './Message';
+import Message from '../components/Message';
 
 type User = {
   username?: string;
