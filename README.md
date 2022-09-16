@@ -16,10 +16,11 @@ API documentation: https://github.com/f-marinelli/BE-screen
 
 ## Description
 
-At the moment the App has three pages: Profile, Homepage and Recover Password.
+At the moment the App has four pages: Profile, Homepage, Diagram and Recover Password.
 
 - In the `Profile` page there are your data and a button that send you an email with a link to `Recover` page.
 - In the `Homepage` there are a button for buy the API key and a form for send your code and download the screenshot.
+- In the `Diagram` page there is a form for create and download a bargraph diagram.
 - The `Recover` page is accessible only by the link received by email and there is a form to update your password.
 
 The custom hook `useModal` handles three modals: sign in form, sign up form and recover passwword form. These modals are open by clicking each button that requires to be logged in: `ButtonsNav` in the `Navbar`; `BtnKey` and `FormScreen` in the`Homepage`.
