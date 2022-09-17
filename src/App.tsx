@@ -7,6 +7,7 @@ import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { setUser } from './store/userSlice';
+import Diagram from './pages/Diagram';
 
 function App() {
   const user = useAppSelector((state) => state.user.value);
@@ -28,9 +29,15 @@ function App() {
       <Navigation />
       <Routes>
         <Route path="/" element={<Body />} />
+
+        <Route element={<ProtectedRoute user={user} />}>
+          <Route path="/diagram" element={<Diagram />} />
+        </Route>
+
         <Route element={<ProtectedRoute user={user} />}>
           <Route path="/profile" element={<Profile user={user} />} />
         </Route>
+
         <Route path="/:token" element={<Recover />}></Route>
       </Routes>
     </div>
