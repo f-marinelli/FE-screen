@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import DropdownMenu from './Navigation/Dropdown';
 import ButtonsNav from './Navigation/ButtonsNav';
 import { AuthContext } from '../context/AuthContext';
+import Message from './Message';
 
 const Navigation: React.FC = () => {
   const { user } = useContext(AuthContext);
@@ -15,6 +16,7 @@ const Navigation: React.FC = () => {
         </Navbar.Brand>
         {Object.keys(user).length === 0 ? <ButtonsNav /> : <DropdownMenu />}
       </Container>
+      <Message />
     </Navbar>
   );
 };

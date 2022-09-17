@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import { AuthContext } from '../../context/AuthContext';
 import useModal from '../../hooks/useModal';
@@ -7,11 +7,12 @@ import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import signIn from '../../services/signIn';
 import stripe from '../../services/stripe';
-import Message from '../Message';
+import { useAppDispatch } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
 
 const BtnKey: React.FC = () => {
   const { user, setUser } = useContext(AuthContext);
-  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const {
     showIn,
@@ -38,7 +39,7 @@ const BtnKey: React.FC = () => {
         const res = await signIn(data);
 
         if (res?.ok) setUser(res.user);
-        if (!res?.ok) setMessage(res.message);
+        if (!res?.ok) dispatch(setMessage(res.message));
         window.location.href = '/';
       }
 
@@ -48,7 +49,7 @@ const BtnKey: React.FC = () => {
       }
     };
     fetch();
-  }, [user, setUser]);
+  }, [user, setUser, dispatch]);
 
   const handleClick = async () => {
     !user.username && handleShowIn();
@@ -78,7 +79,6 @@ const BtnKey: React.FC = () => {
       />
       <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
       <ModalPsw show={showPsw} handleClose={handleClosePsw} />
-      <Message message={message} setMessage={setMessage} />
     </div>
   );
 };

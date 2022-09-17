@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import recoverPassword from '../../services/recoverPassword';
 import { useValidate } from '../../hooks/useValidate';
-import Message from '../Message';
+import { useAppDispatch } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
 
 interface Props {
   show: boolean;
@@ -12,7 +13,7 @@ interface Props {
 const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
   const { emailValid, validateEmail } = useValidate();
   const [email, setEmail] = useState('');
-  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -30,13 +31,13 @@ const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
       if (email && emailValid) {
         const res = await recoverPassword(email);
 
-        setMessage(res.message);
+        dispatch(setMessage(res.message));
         handleClose();
       }
       setEmail('');
     };
     fetch();
-  }, [emailValid, email, handleClose, validateEmail]);
+  }, [emailValid, email, handleClose, validateEmail, dispatch]);
 
   return (
     <>
@@ -61,7 +62,6 @@ const ModalPsw: React.FC<Props> = ({ show, handleClose }) => {
           </Modal.Footer>
         </Form>
       </Modal>
-      <Message message={message} setMessage={setMessage} />
     </>
   );
 };

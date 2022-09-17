@@ -4,17 +4,18 @@ import jwt_decode from 'jwt-decode';
 import { useValidate } from '../hooks/useValidate';
 import updatePassword from '../services/updatePassword';
 import { AuthContext } from '../context/AuthContext';
-import Message from '../components/Message';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
+import { useAppDispatch } from '../store/hooks';
+import { setMessage } from '../store/messageSlice';
 
 const Recover: React.FunctionComponent = () => {
   const { passwordValid, validatePassword } = useValidate();
   const navigate = useNavigate();
   const { token } = useParams();
   const [newPassword, setNewPassword] = useState('');
-  const [message, setMessage] = useState('');
   const { setUser } = useContext(AuthContext);
+  const dispatch = useAppDispatch();
   const [decodedToken, setDecodedToken] = useState<{
     email: string;
     iat: number;
@@ -53,11 +54,11 @@ const Recover: React.FunctionComponent = () => {
           setUser(res.user);
           navigate('/', { replace: true });
         }
-        if (!res?.ok) setMessage(res.message);
+        if (!res?.ok) dispatch(setMessage(res.message));
       }
     };
     fetch();
-  }, [passwordValid, decodedToken, newPassword, token, navigate, setUser]);
+  }, [passwordValid, decodedToken, newPassword, token, navigate, setUser, dispatch]);
 
   return (
     <>
@@ -78,7 +79,6 @@ const Recover: React.FunctionComponent = () => {
           Submit
         </Button>
       </Form>
-      <Message message={message} setMessage={setMessage} />
     </>
   );
 };

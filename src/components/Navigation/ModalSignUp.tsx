@@ -3,7 +3,8 @@ import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
 import { AuthContext } from '../../context/AuthContext';
 import signUp from '../../services/signUp';
-import Message from '../Message';
+import { useAppDispatch } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
 
 interface Props {
   show: boolean;
@@ -14,7 +15,7 @@ interface Props {
 const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   const { emailValid, passwordValid, usernameValid, validateForm, resetForm } = useValidate();
   const { setUser } = useContext(AuthContext);
-  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -61,14 +62,23 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
         const res = await signUp(data);
 
         if (res?.ok) setUser(res.user);
-        if (!res?.ok) setMessage(res.message);
+        if (!res?.ok) dispatch(setMessage(res.message));
 
         resetForm();
         handleClose();
       }
     };
     fetch();
-  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, setUser]);
+  }, [
+    passwordValid,
+    emailValid,
+    usernameValid,
+    resetForm,
+    handleClose,
+    formData,
+    setUser,
+    dispatch,
+  ]);
 
   return (
     <>
@@ -109,7 +119,6 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
           </Modal.Footer>
         </Form>
       </Modal>
-      <Message message={message} setMessage={setMessage} />
     </>
   );
 };

@@ -1,7 +1,7 @@
-import { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import recoverPassword from '../services/recoverPassword';
-import Message from '../components/Message';
+import { useAppDispatch } from '../store/hooks';
+import { setMessage } from '../store/messageSlice';
 
 type User = {
   username?: string;
@@ -16,11 +16,11 @@ interface Props {
 }
 
 const Profile: React.FC<Props> = ({ user }) => {
-  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const handleRecoverPassword = async () => {
     const res = await recoverPassword(user.email as string);
-    setMessage(res.message);
+    dispatch(setMessage(res.message));
   };
 
   return (
@@ -41,7 +41,6 @@ const Profile: React.FC<Props> = ({ user }) => {
       <Button className="mt-2" variant="dark" onClick={handleRecoverPassword}>
         Update Password
       </Button>
-      <Message message={message} setMessage={setMessage} />
     </div>
   );
 };

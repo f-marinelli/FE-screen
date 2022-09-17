@@ -6,12 +6,13 @@ import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import screenshot from '../../services/screenshot';
-import Message from '../Message';
+import { useAppDispatch } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
 
 const FormScreen: React.FC = () => {
   const { user } = useContext(AuthContext);
   const [download, setDownload] = useState('');
-  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const {
     showIn,
@@ -49,7 +50,7 @@ const FormScreen: React.FC = () => {
     }
     if (!res?.ok) {
       const json = await res.json();
-      setMessage(json.message);
+      dispatch(setMessage(json.message));
     }
   };
 
@@ -87,7 +88,6 @@ const FormScreen: React.FC = () => {
       />
       <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
       <ModalPsw show={showPsw} handleClose={handleClosePsw} />
-      <Message message={message} setMessage={setMessage} />
     </Container>
   );
 };
