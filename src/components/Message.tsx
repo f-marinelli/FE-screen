@@ -1,17 +1,16 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { resetMessage } from '../store/messageSlice';
 
-interface Props {
-  message: string;
-  setMessage: Dispatch<SetStateAction<string>>;
-}
-
-const Message: React.FC<Props> = (props: Props) => {
+const Message: React.FC = () => {
   const [smShow, setSmShow] = useState(false);
+  const dispatch = useAppDispatch();
+  const message = useAppSelector((state) => state.message.value);
 
   useEffect(() => {
-    props.message && setSmShow(true);
-  }, [props.message]);
+    message && setSmShow(true);
+  }, [message]);
 
   return (
     <Modal
@@ -19,12 +18,12 @@ const Message: React.FC<Props> = (props: Props) => {
       show={smShow}
       onHide={() => {
         setSmShow(false);
-        props.setMessage('');
+        dispatch(resetMessage());
       }}
       aria-labelledby="example-modal-sizes-title-sm"
     >
       <Modal.Header closeButton>
-        <Modal.Title id="example-modal-sizes-title-sm">{props.message}</Modal.Title>
+        <Modal.Title id="example-modal-sizes-title-sm">{message}</Modal.Title>
       </Modal.Header>
     </Modal>
   );

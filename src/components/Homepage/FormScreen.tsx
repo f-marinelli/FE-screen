@@ -1,17 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
 import useModal from '../../hooks/useModal';
 import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import screenshot from '../../services/screenshot';
-import Message from '../Message';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
 
 const FormScreen: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const user = useAppSelector((state) => state.user.value);
   const [download, setDownload] = useState('');
-  const [message, setMessage] = useState('');
+  const dispatch = useAppDispatch();
 
   const {
     showIn,
@@ -49,7 +49,7 @@ const FormScreen: React.FC = () => {
     }
     if (!res?.ok) {
       const json = await res.json();
-      setMessage(json.message);
+      dispatch(setMessage(json.message));
     }
   };
 
@@ -87,7 +87,6 @@ const FormScreen: React.FC = () => {
       />
       <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
       <ModalPsw show={showPsw} handleClose={handleClosePsw} />
-      <Message message={message} setMessage={setMessage} />
     </Container>
   );
 };

@@ -1,18 +1,17 @@
-import { useState, useRef, useContext } from 'react';
+import { useState, useRef } from 'react';
 import Bargraphs from './FormBargraph';
 import generateHtml from '../../services/generateHtml';
 import generateCss from '../../services/generateCss';
-import { AuthContext } from '../../context/AuthContext';
 import screenshot from '../../services/screenshot';
-import Message from '../Message';
-// import { screen } from 'screen-p';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
 
 const FormDiagram = () => {
   const typeDiag = useRef();
   const [selectedDiag, setSelectedDiag] = useState('');
   const [download, setDownload] = useState();
-  const [message, setMessage] = useState('');
-  const { user } = useContext(AuthContext);
+  const user = useAppSelector((state) => state.user.value);
+  const dispatch = useAppDispatch();
 
   const diagramChangeHandler = () => {
     setSelectedDiag(typeDiag.current.value);
@@ -60,17 +59,8 @@ const FormDiagram = () => {
     }
     if (!res?.ok) {
       const json = await res.json();
-      setMessage(json.message);
+      dispatch(setMessage(json.message));
     }
-
-    // const serverData = await screen(htmlString);
-
-    // const objectURL = URL.createObjectURL(serverData);
-
-    // if (token) {
-    //   props.preview(htmlString);
-    //   setDownload(objectURL);
-    // }
   };
 
   const downloadButton = download ? (
@@ -109,7 +99,6 @@ const FormDiagram = () => {
 
         {downloadButton}
       </div>
-      <Message message={message} setMessage={setMessage} />
     </form>
   );
 };

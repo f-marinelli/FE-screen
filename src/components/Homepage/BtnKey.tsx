@@ -1,17 +1,18 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
 import useModal from '../../hooks/useModal';
 import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import signIn from '../../services/signIn';
 import stripe from '../../services/stripe';
-import Message from '../Message';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { setMessage } from '../../store/messageSlice';
+import { setUser } from '../../store/userSlice';
 
 const BtnKey: React.FC = () => {
-  const { user, setUser } = useContext(AuthContext);
-  const [message, setMessage] = useState('');
+  const user = useAppSelector((state) => state.user.value);
+  const dispatch = useAppDispatch();
 
   const {
     showIn,
@@ -37,8 +38,8 @@ const BtnKey: React.FC = () => {
       if (query.get('success') && user.email) {
         const res = await signIn(data);
 
-        if (res?.ok) setUser(res.user);
-        if (!res?.ok) setMessage(res.message);
+        if (res?.ok) dispatch(setUser(res.user));
+        if (!res?.ok) dispatch(setMessage(res.message));
         window.location.href = '/';
       }
 
@@ -48,7 +49,7 @@ const BtnKey: React.FC = () => {
       }
     };
     fetch();
-  }, [user, setUser]);
+  }, [user, dispatch]);
 
   const handleClick = async () => {
     !user.username && handleShowIn();
@@ -78,7 +79,6 @@ const BtnKey: React.FC = () => {
       />
       <ModalSignUp show={showUp} handleClose={handleCloseUp} switchForm={handleSwitchForm} />
       <ModalPsw show={showPsw} handleClose={handleClosePsw} />
-      <Message message={message} setMessage={setMessage} />
     </div>
   );
 };
