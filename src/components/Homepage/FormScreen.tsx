@@ -1,16 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
 import useModal from '../../hooks/useModal';
 import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import screenshot from '../../services/screenshot';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setMessage } from '../../store/messageSlice';
 
 const FormScreen: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const user = useAppSelector((state) => state.user.value);
   const [download, setDownload] = useState('');
   const dispatch = useAppDispatch();
 

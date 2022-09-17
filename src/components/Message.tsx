@@ -3,11 +3,6 @@ import { Modal } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { resetMessage } from '../store/messageSlice';
 
-// interface Props {
-//   message: string;
-//    setMessage: Dispatch<SetStateAction<string>>;
-// }
-
 const Message: React.FC = () => {
   const [smShow, setSmShow] = useState(false);
   const dispatch = useAppDispatch();

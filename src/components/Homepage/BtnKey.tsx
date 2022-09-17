@@ -1,17 +1,17 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Button } from 'react-bootstrap';
-import { AuthContext } from '../../context/AuthContext';
 import useModal from '../../hooks/useModal';
 import ModalPsw from '../Navigation/ModalPsw';
 import ModalSignIn from '../Navigation/ModalSignIn';
 import ModalSignUp from '../Navigation/ModalSignUp';
 import signIn from '../../services/signIn';
 import stripe from '../../services/stripe';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { setMessage } from '../../store/messageSlice';
+import { setUser } from '../../store/userSlice';
 
 const BtnKey: React.FC = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const user = useAppSelector((state) => state.user.value);
   const dispatch = useAppDispatch();
 
   const {
@@ -38,7 +38,7 @@ const BtnKey: React.FC = () => {
       if (query.get('success') && user.email) {
         const res = await signIn(data);
 
-        if (res?.ok) setUser(res.user);
+        if (res?.ok) dispatch(setUser(res.user));
         if (!res?.ok) dispatch(setMessage(res.message));
         window.location.href = '/';
       }
@@ -49,7 +49,7 @@ const BtnKey: React.FC = () => {
       }
     };
     fetch();
-  }, [user, setUser, dispatch]);
+  }, [user, dispatch]);
 
   const handleClick = async () => {
     !user.username && handleShowIn();

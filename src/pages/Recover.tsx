@@ -1,20 +1,19 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import jwt_decode from 'jwt-decode';
 import { useValidate } from '../hooks/useValidate';
 import updatePassword from '../services/updatePassword';
-import { AuthContext } from '../context/AuthContext';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import { useAppDispatch } from '../store/hooks';
 import { setMessage } from '../store/messageSlice';
+import { setUser } from '../store/userSlice';
 
 const Recover: React.FunctionComponent = () => {
   const { passwordValid, validatePassword } = useValidate();
   const navigate = useNavigate();
   const { token } = useParams();
   const [newPassword, setNewPassword] = useState('');
-  const { setUser } = useContext(AuthContext);
   const dispatch = useAppDispatch();
   const [decodedToken, setDecodedToken] = useState<{
     email: string;
@@ -51,14 +50,14 @@ const Recover: React.FunctionComponent = () => {
         const res = await updatePassword(token as string, decodedToken, newPassword);
 
         if (res?.ok) {
-          setUser(res.user);
+          dispatch(setUser(res.user));
           navigate('/', { replace: true });
         }
         if (!res?.ok) dispatch(setMessage(res.message));
       }
     };
     fetch();
-  }, [passwordValid, decodedToken, newPassword, token, navigate, setUser, dispatch]);
+  }, [passwordValid, decodedToken, newPassword, token, navigate, dispatch]);
 
   return (
     <>

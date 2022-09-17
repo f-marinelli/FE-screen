@@ -1,10 +1,10 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Modal, Button } from 'react-bootstrap';
 import { useValidate } from '../../hooks/useValidate';
-import { AuthContext } from '../../context/AuthContext';
 import signUp from '../../services/signUp';
 import { useAppDispatch } from '../../store/hooks';
 import { setMessage } from '../../store/messageSlice';
+import { setUser } from '../../store/userSlice';
 
 interface Props {
   show: boolean;
@@ -14,7 +14,6 @@ interface Props {
 
 const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
   const { emailValid, passwordValid, usernameValid, validateForm, resetForm } = useValidate();
-  const { setUser } = useContext(AuthContext);
   const dispatch = useAppDispatch();
 
   const [formData, setFormData] = useState({
@@ -61,7 +60,7 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
 
         const res = await signUp(data);
 
-        if (res?.ok) setUser(res.user);
+        if (res?.ok) dispatch(setUser(res.user));
         if (!res?.ok) dispatch(setMessage(res.message));
 
         resetForm();
@@ -69,16 +68,7 @@ const ModalSignUp: React.FC<Props> = ({ show, handleClose, switchForm }) => {
       }
     };
     fetch();
-  }, [
-    passwordValid,
-    emailValid,
-    usernameValid,
-    resetForm,
-    handleClose,
-    formData,
-    setUser,
-    dispatch,
-  ]);
+  }, [passwordValid, emailValid, usernameValid, resetForm, handleClose, formData, dispatch]);
 
   return (
     <>

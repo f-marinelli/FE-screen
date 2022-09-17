@@ -1,10 +1,13 @@
 import { Dropdown } from 'react-bootstrap';
-import React, { useContext } from 'react';
-import { AuthContext } from '../../context/AuthContext';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { logout } from '../../store/userSlice';
 
 const DropdownMenu: React.FC = () => {
-  const { setUser, user } = useContext(AuthContext);
+  const user = useAppSelector((state) => state.user.value);
+  const dispatch = useAppDispatch();
+
   const navigate = useNavigate();
 
   function capitalizeFirstLetter(user: { username?: string }): string | undefined {
@@ -24,7 +27,7 @@ const DropdownMenu: React.FC = () => {
         <Dropdown.Item onClick={() => navigate('/profile', { replace: true })}>
           Profile
         </Dropdown.Item>
-        <Dropdown.Item onClick={() => setUser({})}>Logout</Dropdown.Item>
+        <Dropdown.Item onClick={() => dispatch(logout())}>Logout</Dropdown.Item>
         {/* <Dropdown.Item href="#/action-3">Something else</Dropdown.Item> */}
       </Dropdown.Menu>
     </Dropdown>

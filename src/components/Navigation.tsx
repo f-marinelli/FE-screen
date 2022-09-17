@@ -1,12 +1,12 @@
 import { Navbar, Container } from 'react-bootstrap';
-import React, { useContext } from 'react';
+import React from 'react';
 import DropdownMenu from './Navigation/Dropdown';
 import ButtonsNav from './Navigation/ButtonsNav';
-import { AuthContext } from '../context/AuthContext';
 import Message from './Message';
+import { useAppSelector } from '../store/hooks';
 
 const Navigation: React.FC = () => {
-  const { user } = useContext(AuthContext);
+  const user = useAppSelector((state) => state.user.value);
 
   return (
     <Navbar expand="lg" variant="dark" bg="dark" className="fixed-top">
