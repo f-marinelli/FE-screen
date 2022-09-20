@@ -14,7 +14,7 @@ const Navigation: React.FC = () => {
         <Navbar.Brand color="light" href="#">
           LOGO
         </Navbar.Brand>
-        {Object.keys(user).length === 0 ? <ButtonsNav /> : <DropdownMenu />}
+        {'username' in user ? <DropdownMenu /> : <ButtonsNav />}
       </Container>
       <Message />
     </Navbar>
